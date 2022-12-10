@@ -20,39 +20,47 @@ fun main() {
             var spaceCounter = 0
             var stackCounter = 0
             if (readingCrates) {
+                if (line.isEmpty()) {
+                    readingCrates = false
+                    continue
+                }
                 for (c in line.toCharArray()) {
-                    if (c == ' ' || c == '[') {
+                    if (c == ' ') {
                         spaceCounter++
                         if (spaceCounter == 4) {
                             stackCounter++
                             spaceCounter = 0
                         }
-                    }
-                    if (c.isLetter()) {
-                        if (c == 'm') {
-                            readingCrates = false
-                            break
-                        }
-                        spaceCounter++
-                        if (spaceCounter == 4) {
-                            stackCounter++
-                            spaceCounter = 0
-                        }
+                    }else if(c == '[') {
+                        spaceCounter=0
+                    }else if(c==']'){
+                        stackCounter++
+                    } else if (c.isLetter()) {
+                        spaceCounter=0
                         stacks[stackCounter].add(c)
                     }
                 }
             } else {
                 //read the instructions
-                var split=line.split(' ')
-                var moveItems=split[1].toInt()
-                var from=split[3].toInt()
-                var to=split[5].toInt()
+                var split = line.split(' ')
+                var moveItems = split[1].toInt()
+                var from = split[3].toInt()
+                var to = split[5].toInt()
+
                 //and move the boxes as they say
-                println(split)
+                for (i in 1..moveItems) {
+                    stacks[to - 1].add(0, stacks[from - 1][0])
+                    stacks[from - 1].removeFirst()
+                    //println(split)
+                }
+                //println("Done processing line: ${line}")
             }
         }
-
         //read the first letter of all the stacks into its own string
+        for (i in 0..stacks.lastIndex) {
+            tops += stacks[i][0]
+        }
+
         return tops
     }
 
@@ -68,5 +76,5 @@ fun main() {
 
     val input = readInput("Day05")
     println(part1(input))
-    println(part2(input))
+//    println(part2(input))
 }
