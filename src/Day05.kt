@@ -1,6 +1,6 @@
 fun main() {
 
-    fun part1(input: List<String>): String {
+    fun moveBoxes(input: List<String>, multipleBoxMove: Boolean): String {
         var tops = ""
         //read the file to figure out how many stacks
         var numStacks = 0
@@ -31,27 +31,35 @@ fun main() {
                             stackCounter++
                             spaceCounter = 0
                         }
-                    }else if(c == '[') {
-                        spaceCounter=0
-                    }else if(c==']'){
+                    } else if (c == '[') {
+                        spaceCounter = 0
+                    } else if (c == ']') {
                         stackCounter++
                     } else if (c.isLetter()) {
-                        spaceCounter=0
+                        spaceCounter = 0
                         stacks[stackCounter].add(c)
                     }
                 }
             } else {
                 //read the instructions
-                var split = line.split(' ')
+                val split = line.split(' ')
                 var moveItems = split[1].toInt()
-                var from = split[3].toInt()
-                var to = split[5].toInt()
+                val from = split[3].toInt()
+                val to = split[5].toInt()
 
                 //and move the boxes as they say
-                for (i in 1..moveItems) {
-                    stacks[to - 1].add(0, stacks[from - 1][0])
-                    stacks[from - 1].removeFirst()
-                    //println(split)
+                if (!multipleBoxMove) {
+                    for (i in 1..moveItems) {
+                        stacks[to - 1].add(0, stacks[from - 1][0])
+                        stacks[from - 1].removeFirst()
+                        //println(split)
+                    }
+                } else {
+                    for (i in 1..moveItems) {
+                        stacks[to - 1].add(0, stacks[from - 1][moveItems-1])
+                        stacks[from - 1].removeAt(moveItems-1)
+                        moveItems--
+                    }
                 }
                 //println("Done processing line: ${line}")
             }
@@ -64,17 +72,20 @@ fun main() {
         return tops
     }
 
+    fun part1(input: List<String>): String {
+        return moveBoxes(input, false)
+    }
+
     fun part2(input: List<String>): String {
-        var tops = ""
-        return tops
+        return moveBoxes(input, true)
     }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day05_test")
     check(part1(testInput) == "CMZ")
-    //check(part2(testInput) == ?)
+    check(part2(testInput) == "MCD")
 
     val input = readInput("Day05")
     println(part1(input))
-//    println(part2(input))
+    println(part2(input))
 }
